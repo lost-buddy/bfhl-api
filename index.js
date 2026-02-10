@@ -74,34 +74,24 @@ app.post("/bfhl", async (req, res) => {
         data = value.reduce((acc, num) => gcd(acc, num));
         break;
 
-      case "AI":
+    case "AI":
   if (typeof value !== "string") throw "Invalid AI input";
 
   try {
-    // 1. Using v1 instead of v1beta
-    // 2. Using gemini-2.0-flash (the current stable standard)
+    
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
     
-    const response = await axios.post(
-      url,
-      {
-        contents: [{ parts: [{ text: value }] }]
-      },
-      {
-        headers: { "Content-Type": "application/json" }
-      }
-    );
+    const response = await axios.post(url, {
+      contents: [{ parts: [{ text: value }] }]
+    });
 
-    
-    const text = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw "AI returned an empty response";
+    const aiText = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!aiText) throw "AI response empty";
 
-    data = text.trim().split(/\s+/)[0].replace(/[.,]/g, "");
-
-  } catch (error) {
-    
-    console.error("AI API Error Details:", error.response?.data || error.message);
-    throw "AI request failed: " + (error.response?.data?.error?.message || error.message);
+    data = aiText.trim().split(/\s+/)[0].replace(/[.,]/g, "");
+  } catch (err) {
+    console.error("Gemini Error:", err.response?.data || err.message);
+    throw "AI failed";
   }
   break;
 
