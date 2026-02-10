@@ -76,26 +76,34 @@ app.post("/bfhl", async (req, res) => {
         break;
 
       case "AI":
-        if (typeof value !== "string")
-          throw new Error("Invalid AI input");
+  if (typeof value !== "string")
+    throw new Error("Invalid AI input");
 
-        const response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
-          {
-            contents: [
-              {
-                parts: [{ text: value }]
-              }
-            ]
-          }
-        );
+  const response = await axios.post(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+    {
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: value }]
+        }
+      ]
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": process.env.GEMINI_API_KEY
+      }
+    }
+  );
 
-        data = response.data.candidates[0].content.parts[0].text
-          .trim()
-          .split(/\s+/)[0]
-          .replace(/[.,]/g, "");
+  data = response.data.candidates[0].content.parts[0].text
+    .trim()
+    .split(/\s+/)[0]
+    .replace(/[.,]/g, "");
 
-        break;
+  break;
+
 
       default:
         throw new Error("Invalid key");
