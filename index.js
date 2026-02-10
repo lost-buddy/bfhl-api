@@ -7,7 +7,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const EMAIL = process.env.OFFICIAL_EMAIL;
+const EMAIL = process.env.OFFICIAL_EMAIL?.trim();
+
 console.log("Loaded EMAIL:", EMAIL);
 
 
