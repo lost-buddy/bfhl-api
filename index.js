@@ -79,30 +79,24 @@ app.post("/bfhl", async (req, res) => {
   if (typeof value !== "string")
     throw new Error("Invalid AI input");
 
-  const response = await axios.post(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-    {
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: value }]
-        }
-      ]
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": process.env.GEMINI_API_KEY
-      }
-    }
-  );
+  const OpenAI = require("openai");
 
-  data = response.data.candidates[0].content.parts[0].text
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [{ role: "user", content: value }],
+  });
+
+  data = completion.choices[0].message.content
     .trim()
     .split(/\s+/)[0]
     .replace(/[.,]/g, "");
 
   break;
+
 
 
       default:
