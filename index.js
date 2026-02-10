@@ -7,11 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const OpenAI = require("openai");
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 
 const EMAIL = process.env.OFFICIAL_EMAIL?.trim();
@@ -85,14 +81,16 @@ app.post("/bfhl", async (req, res) => {
       case "AI":
   if (typeof value !== "string") throw "Invalid AI input";
 
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      { role: "user", content: value }
-    ],
-  });
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-  data = completion.choices[0].message.content
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  const result = await model.generateContent(value);
+
+  const response = await result.response;
+  const text = response.text();
+
+  data = text
     .trim()
     .split(/\s+/)[0]
     .replace(/[.,]/g, "");
