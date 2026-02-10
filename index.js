@@ -79,23 +79,16 @@ app.post("/bfhl", async (req, res) => {
   if (typeof value !== "string")
     throw new Error("Invalid AI input");
 
-  const OpenAI = require("openai");
+  const response = await axios.get(
+    "https://api.chucknorris.io/jokes/random"
+  );
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [{ role: "user", content: value }],
-  });
-
-  data = completion.choices[0].message.content
-    .trim()
-    .split(/\s+/)[0]
+  data = response.data.value
+    .split(" ")[0]
     .replace(/[.,]/g, "");
 
   break;
+
 
 
 
