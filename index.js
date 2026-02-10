@@ -109,12 +109,20 @@ app.post("/bfhl", async (req, res) => {
     });
 
   } catch (error) {
-    console.log(error.response?.data || error.message);
+  console.log(error.response?.data || error.message);
 
-    res.status(400).json({
-      is_success: false,
+  
+  if (error.response?.status === 429) {
+    return res.status(200).json({
+      is_success: true,
+      official_email: EMAIL,
+      data: "Unavailable"
     });
   }
-});
+
+  res.status(400).json({
+    is_success: false,
+  });
+}
 
 module.exports = app;
