@@ -10,6 +10,7 @@ app.use(express.json());
 const EMAIL = process.env.OFFICIAL_EMAIL?.trim();
 
 console.log("Loaded EMAIL:", EMAIL);
+console.log("Gemini Key:", process.env.GEMINI_API_KEY);
 
 
 const isPrime = (n) => {
@@ -77,7 +78,7 @@ app.post("/bfhl", async (req, res) => {
         if (typeof value !== "string") throw "Invalid AI input";
 
         const response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+          `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
           {
             contents: [{ parts: [{ text: value }] }],
           }
