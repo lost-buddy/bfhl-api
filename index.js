@@ -99,11 +99,12 @@ app.post("/bfhl", async (req, res) => {
       data,
     });
 
-  } catch (error) {
-    res.status(400).json({
-      is_success: false,
-    });
-  }
+  }  catch (error) {
+  console.log(error.response?.data || error.message);
+  res.status(400).json({
+    is_success: false,
+  });
+}
 });
 
 
