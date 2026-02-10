@@ -124,5 +124,6 @@ app.post("/bfhl", async (req, res) => {
     is_success: false,
   });
 }
+}); 
 
 module.exports = app;
