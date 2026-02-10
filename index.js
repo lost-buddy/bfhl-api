@@ -77,28 +77,25 @@ app.post("/bfhl", async (req, res) => {
       case "AI":
   if (typeof value !== "string") throw "Invalid AI input";
 
-  const response = await axios.post(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-    {
-      contents: [
-        {
-          parts: [{ text: value }]
-        }
-      ]
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": process.env.GEMINI_API_KEY
+  try {
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [{ parts: [{ text: value }] }]
+      },
+      {
+        headers: { "Content-Type": "application/json" }
       }
-    }
-  );
+    );
 
-  data = response.data.candidates[0].content.parts[0].text
-    .trim()
-    .split(/\s+/)[0]
-    .replace(/[.,]/g, "");
-
+    data = response.data.candidates[0].content.parts[0].text
+      .trim()
+      .split(/\s+/)[0]
+      .replace(/[.,]/g, "");
+  } catch (apiErr) {
+    console.error("Gemini API Error:", apiErr.response?.data || apiErr.message);
+    throw "AI Service unavailable";
+  }
   break;
 
 
@@ -117,6 +114,8 @@ app.post("/bfhl", async (req, res) => {
   res.status(400).json({
     is_success: false,
   });
+  console.log(error.response?.data || error.message);
+
 }
 });
 
