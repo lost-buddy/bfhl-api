@@ -82,9 +82,9 @@ app.post("/bfhl", async (req, res) => {
           }
         );
 
-        data =
-          response.data.candidates[0].content.parts[0].text
-            .split(" ")[0];
+        data = response.data.candidates[0].content.parts[0].text.trim().split(/\s+/)[0].replace(/[.,]/g, "");
+
+
         break;
 
       default:
