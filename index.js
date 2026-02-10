@@ -78,23 +78,31 @@ app.post("/bfhl", async (req, res) => {
         data = value.reduce((acc, num) => gcd(acc, num));
         break;
 
-      case "AI":
+     case "AI":
   if (typeof value !== "string")
     throw new Error("Invalid AI input");
 
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-  const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-pro-latest"
-  });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash"
+    });
 
-  const result = await model.generateContent(value);
+    const result = await model.generateContent(value);
+    const text = result.response.text();
 
-  const text = result.response.text();
+    data = text.trim().split(/\s+/)[0].replace(/[.,]/g, "");
 
-  data = text.trim().split(/\s+/)[0].replace(/[.,]/g, "");
+  } catch (aiError) {
+    console.log("AI Error:", aiError.message);
+
+    
+    data = "Unavailable";
+  }
 
   break;
+
 
 
 
