@@ -81,12 +81,15 @@ app.post("/bfhl", async (req, res) => {
       case "AI":
   if (typeof value !== "string") throw "Invalid AI input";
 
+  const { GoogleGenerativeAI } = require("@google/generative-ai");
+
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({
+    model: "gemini-pro"
+  });
 
   const result = await model.generateContent(value);
-
   const response = await result.response;
   const text = response.text();
 
