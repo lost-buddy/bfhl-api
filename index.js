@@ -77,8 +77,8 @@ app.post("/bfhl", async (req, res) => {
       case "AI":
         if (typeof value !== "string") throw "Invalid AI input";
 
-  const response = await axios.post(
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent",
+const response = await axios.post(
+  "https://generativelanguage.googleapis.com/v1/models/gemini-1.0-pro:generateContent",
   {
     contents: [
       {
@@ -93,6 +93,7 @@ app.post("/bfhl", async (req, res) => {
     }
   }
 );
+
 
 
 
