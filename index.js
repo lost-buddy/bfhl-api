@@ -7,6 +7,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const OpenAI = require("openai");
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+
 const EMAIL = process.env.OFFICIAL_EMAIL?.trim();
 
 const isPrime = (n) => {
@@ -76,18 +83,22 @@ app.post("/bfhl", async (req, res) => {
         break;
 
       case "AI":
-  if (typeof value !== "string")
-    throw new Error("Invalid AI input");
+  if (typeof value !== "string") throw "Invalid AI input";
 
-  const response = await axios.get(
-    "https://api.chucknorris.io/jokes/random"
-  );
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "user", content: value }
+    ],
+  });
 
-  data = response.data.value
-    .split(" ")[0]
+  data = completion.choices[0].message.content
+    .trim()
+    .split(/\s+/)[0]
     .replace(/[.,]/g, "");
 
   break;
+
 
 
 
