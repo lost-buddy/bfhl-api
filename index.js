@@ -74,23 +74,31 @@ app.post("/bfhl", async (req, res) => {
         data = value.reduce((acc, num) => gcd(acc, num));
         break;
 
-    case "AI":
+   case "AI":
   if (typeof value !== "string") throw "Invalid AI input";
 
   try {
-    
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
     
     const response = await axios.post(url, {
       contents: [{ parts: [{ text: value }] }]
     });
 
-    const aiText = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!aiText) throw "AI response empty";
+    data = response.data.candidates[0].content.parts[0].text
+      .trim()
+      .split(/\s+/)[0]
+      .replace(/[.,]/g, "");
 
-    data = aiText.trim().split(/\s+/)[0].replace(/[.,]/g, "");
-  } catch (err) {
-    console.error("Gemini Error:", err.response?.data || err.message);
+  } catch (error) {
+    if (error.response?.status === 429) {
+       // Specifically handle the rate limit error
+       console.error("QUOTA EXCEEDED: Slow down your requests.");
+       return res.status(429).json({ 
+         is_success: false, 
+         message: "Rate limit reached. Please wait a minute and try again." 
+       });
+    }
+    console.error("AI Error:", error.response?.data || error.message);
     throw "AI failed";
   }
   break;
