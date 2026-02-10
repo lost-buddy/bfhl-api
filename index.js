@@ -98,7 +98,11 @@ const response = await axios.post(
 
 
 
-        data = response.data.candidates[0].content.parts[0].text.trim().split(/\s+/)[0].replace(/[.,]/g, "");
+        data = response.data.candidates[0].content.parts[0].text
+  .trim()
+  .split(/\s+/)[0]
+  .replace(/[.,]/g, "");
+
 
 
         break;
